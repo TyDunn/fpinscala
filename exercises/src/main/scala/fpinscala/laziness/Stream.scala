@@ -118,4 +118,10 @@ object Stream {
 
   def onesViaUnfold = unfold(1)(_ => Some((1,1)))
 
+  def mapViaUnfold[B](f: A => B): Stream[B] =
+    unfold(this) {
+      case Cons(h,t) => Some((f(h()), t()))
+      case _ => None
+    }
+
 }

@@ -124,4 +124,24 @@ object Stream {
       case _ => None
     }
 
+  def takeViaUnfold(n: Int): Stream[A] =
+    unfold((this,n)) {
+      case (Cons(h,t), 1) => Some((h(), (empty, 0)))
+      case (Cons(h,t), n) if n > 1 => Some(h(), (t(), n-1)))
+      case _ => None
+    }
+
+  def takeWhileViaUnfold(f: A => Boolean): Stream[A] =
+    unfold(this) {
+      case Cons(h,t) if f(h()) => Some((h(), t()))
+      case _ => None
+    }
+
+  def zipWith[B,C](s2: Stream[B])(f: (A,B) => C): Stream[C] =
+    unfold((this, s2)) {
+      case (Cons(h1,t1), Cons(h2,t2)) =>
+        Some((f(h1(), h2()), (t1(), t2())))
+      case _ => None
+    }
+
 }

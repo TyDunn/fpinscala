@@ -144,4 +144,18 @@ object Stream {
       case _ => None
     }
 
+  def zip[B](s2: Stream[B]): Stream[(A,B)] =
+    zipWith(s2)((_,_))
+
+  def zipAll[B](s2: Stream[B]): Stream[(Option[A], Option[B])] =
+    zipWithAll(s2)((_,_))
+
+  def zipWithAll[B,C](s2: Stream[B])(f: (Option[A], Option[B]) => C): Stream[C] =
+    Stream.unfold((this, s2)) {
+      case (Empty, Empty) => None
+      case (Cons(h,t), Empty) => Some(f(Some(h()), Option.empty[B]) -> (t(), empty[B]))
+      case (Empty, Cons(h,t)) => Some(f(Option,empty[A], Some(h())) -> (empty[A] -> t()))
+      case (Cons(h1,t1), Cons(h2,t2)) => Some(f(Some(h1()), Some(h2())) -> (t1() -> t2()))
+    }
+
 }

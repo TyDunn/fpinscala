@@ -169,4 +169,11 @@ def tails: Stream[Stream[A]]:
     case s => Some((s, s drop 1))
   } append Stream(empty)
 
+def scanRight[B](z: B)(f: A => B): Stream[B] =
+  foldRight((z, Stream(z)))((a, p0)) => {
+    lazy val p1 = p0
+    val b2 = f(a, p1._1)
+    (b2, cons(b2, p1._2))
+  })._2
+
 }

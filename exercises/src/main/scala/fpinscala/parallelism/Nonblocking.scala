@@ -144,7 +144,10 @@ object Nonblocking {
       ???
 
     def flatMap[A,B](p: Par[A])(f: A => Par[B]): Par[B] =
-      ???
+      es => new Future[B] {
+        def apply(cb: B => Unit): Unit =
+          p(es)(a => f(a)(es)(cb))
+      }
 
     def choiceViaChooser[A](p: Par[Boolean])(f: Par[A], t: Par[A]): Par[A] =
       ???
